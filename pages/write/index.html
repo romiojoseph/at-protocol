@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AT Pages: Write long-form posts with your Bluesky ID</title>
+    <meta name="description"
+        content="Sign in with Bluesky, write without limits, and save posts as custom ATProto records. Or use the Node script to handle everything yourself.">
+    <meta property="og:image" content="/assets/social-image.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+
+    <meta property="og:title" content="AT Pages: Write long-form posts with your Bluesky ID">
+    <meta property="og:description"
+        content="Sign in with Bluesky, write without limits, and save posts as custom ATProto records. Or use the Node script to handle everything yourself.">
+    <meta property="og:image" content="/assets/social-image.png">
+    <meta property="og:url" content="https://skywrite.pages.dev/write">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="write.css">
+    <meta name="robots" content="index, follow">
+
+    <!-- Import @atproto/api and date-fns via ESM CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "@atproto/api": "https://esm.sh/@atproto/api@0.12.4",
+                "date-fns": "https://esm.sh/date-fns@3.6.0"
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden">
+        <div class="loading-content">
+            <i class="ph-duotone ph-spinner-gap loading-spinner"></i>
+            <p id="loading-message">Loading...</p>
+        </div>
+    </div>
+
+
+    <!-- Header for Title and User Info -->
+    <header class="app-header">
+        <a href="/" title="Main page" target="_blank" rel="noopener">
+            <img src="/assets/name.svg" alt="Pages" title="Write pages on AT Proto">
+        </a>
+        <div id="user-info" class="hidden">
+            <span id="user-handle"></span>
+            <button id="logout-button">Logout</button>
+        </div>
+    </header>
+
+    <!-- Status Message Area (Optional, if overlay isn't used for brief status) -->
+    <div id="status-message" class="status hidden"></div>
+
+    <!-- Login Section -->
+    <section id="login-section">
+        <div class="platform-head">
+            <h3>Write longer posts using ATProto</h3>
+            <p>Integrate Bluesky posts with your articles and manage comments in one place.</p>
+            <a href="https://skywrite.pages.dev/?DID=did%3Aplc%3Axglrcj6gmrpktysohindaqhj&view-post=learn-how-it-works"
+                title="A doc to help you learn how it works" target="_blank" rel="noopener">Learn how it works</a>
+        </div>
+
+        <h2 class="main-header-info">Connect with Bluesky</h2>
+        <form id="login-form">
+            <p class="notice">Enter your Bluesky handle and an App Password. <a
+                    href="https://bsky.app/settings/app-passwords" target="_blank" rel="noopener noreferrer">Create App
+                    Password</a>.</p>
+            <div>
+                <label for="handle">Your Bluesky Handle</label>
+                <input type="text" id="handle" required placeholder="eg; yourname.bsky.social">
+            </div>
+            <div>
+                <label for="appPassword">App Password</label>
+                <input type="password" id="appPassword" required placeholder="xxxx-xxxx-xxxx-xxxx" autocomplete="off">
+            </div>
+            <button type="submit" id="login-button">Login & Write</button>
+        </form>
+        <div class="security-notice">
+            <strong>Terms, Conditions & Disclaimer: </strong>This is a client-side tool. When you log in, your Bluesky
+            App Password is sent only once to the official Bluesky API to get a temporary session token. That token, not
+            your password, is saved in your browser for the session. Nothing is stored or shared with any external
+            server. All data stays on your device. You can revoke your App Password anytime in your Bluesky settings.
+            <br>
+            <br>
+            Bluesky App Passwords are safer because they give limited access, can be revoked anytime, and don't expose
+            your main password. Session tokens also expire on their own; for security, this session will automatically
+            end 15 minutes after your initial login.
+            <br>
+            <br>
+            <a href="https://github.com/romiojoseph/at-protocol/tree/main/node-scripts/create-pages" target="_blank"
+                rel="noopener" title="Create long-form posts with your Bluesky ID and Node script">Get Node Script</a>.
+            Built on Bluesky & ATProto.
+        </div>
+    </section>
+
+
+
+    <!-- Main App Section (Hidden initially) -->
+    <section id="app-section" class="hidden">
+
+        <!-- Main Header Group -->
+        <div class="main-header-group">
+            <div class="main-header-info">
+                <!-- REMOVED span for total count -->
+                <h2>Manage Posts</h2>
+                <p class="subtitle">Add, update, or delete your posts anytime.</p>
+            </div>
+            <!-- Buttons Section -->
+            <div class="main-actions">
+                <button id="show-create-form-button">Create New Post</button>
+                <button id="export-button">Export Posts</button>
+            </div>
+        </div>
+
+        <!-- Post List Section -->
+        <div id="post-list-section">
+            <!-- Added Search and Filter Controls -->
+            <div class="list-controls">
+                <input type="search" id="search-input" placeholder="Search posts">
+                <div class="filter-controls">
+                    <select id="category-filter" title="Select a category">
+                        <option value="">All Categories</option>
+                        <!-- Options populated dynamically -->
+                    </select>
+                    <select id="sort-order" title="Sort based on published date">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
+
+            </div>
+            <ul id="post-list">
+                <!-- Posts will be listed here -->
+            </ul>
+            <!-- Added Load More Button -->
+            <button id="load-more-button" class="hidden">Load More Posts</button>
+        </div>
+
+        <!-- Create/Edit Form Section -->
+        <div id="post-form-section" class="hidden">
+            <h3 id="form-title">Create New Post</h3>
+            <p class="subtitle">Write with rich formatting or just plain text.</p>
+            <form id="post-form">
+                <input type="hidden" id="post-rkey">
+                <input type="hidden" id="post-uri">
+
+                <div class="form-field required">
+                    <label for="authorHandle">Author Bluesky Handle</label>
+                    <input type="text" id="authorHandle" required placeholder="eg; username.bsky.social">
+                    <small>Change only if necessary</small>
+                    <div id="author-validation-status"></div>
+                </div>
+                <div class="form-field required">
+                    <label for="title">Post Title</label>
+                    <input type="text" id="title" required placeholder="Democracy dies in darkness">
+                </div>
+                <div class="form-field required">
+                    <label for="shortDescription">Short Description (Max 160 chars)</label>
+                    <!-- Corrected max length reference -->
+                    <textarea id="shortDescription" rows="3" maxlength="160" required
+                        placeholder="Keep it short and under 160 characters."></textarea>
+                </div>
+                <div class="form-field required">
+                    <label for="content">Post Content (Markdown supported)</label>
+                    <textarea id="content" rows="10" required
+                        placeholder="Write your post here, or just copy it from tools like Obsidian."></textarea>
+                    <small>Write your post here, or just copy it from tools like Obsidian.</small>
+                </div>
+                <input type="hidden" id="authorDid">
+                <input type="hidden" id="authorDisplayName">
+                <div class="form-row">
+                    <div class="form-field required">
+                        <label for="slug">Slug </label>
+                        <input type="text" id="slug" required pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                            placeholder="eg; blog-bluesky-atproto">
+                        <small>Must be unique and no spaces. Lowercase letters, numbers and hyphens only.</small>
+                    </div>
+                    <div class="form-field required">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" required placeholder="eg; Resources">
+                        <small>Single category, no commas.</small>
+                    </div>
+                    <div class="form-field optional">
+                        <label for="tags">Tags</label>
+                        <input type="text" id="tags" placeholder="eg; movie suggestions, tutorial, thoughts">
+                        <small>Separate tags with commas.</small>
+                    </div>
+                    <div class="form-field optional">
+                        <label for="recommended">Recommended Post?</label>
+                        <input type="checkbox" id="recommended">
+                        <!-- Removed duplicate label element -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field optional">
+                        <label for="coverImage">Cover Image URL</label>
+                        <input type="url" id="coverImage" placeholder="https://www.domain.com/assets/image.png">
+                        <small>Publish on any media platform like Pinterest, then paste the image link here.</small>
+                        <button type="button" class="clear-btn" data-target="coverImage">Clear</button>
+                    </div>
+                    <div class="form-field optional">
+                        <label for="bskyCommentsPostUri">Bluesky Post URL to Comment On</label>
+                        <input type="text" id="bskyCommentsPostUri"
+                            placeholder="https://bsky.app/profile/.../post/... or at://...">
+                        <small>Link to the Bluesky post where comments happen.</small>
+                        <button type="button" class="clear-btn" data-target="bskyCommentsPostUri">Clear</button>
+                        <div id="comment-uri-status"></div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field required">
+                        <label for="publishedAt">Published At</label>
+                        <input type="datetime-local" id="publishedAt" required>
+                        <small>DD MMM YYYY HH:MM AM/PM</small>
+                    </div>
+                    <div class="form-field optional">
+                        <label for="updatedAt">Updated At</label>
+                        <input type="datetime-local" id="updatedAt">
+                        <small>Leave blank to auto-set on edit</small>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="save-post-button" disabled>Publish</button>
+                    <button type="button" id="cancel-edit-button">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Post Detail View Section -->
+        <div id="post-detail-section" class="hidden">
+            <h3 id="detail-title">Post Details</h3>
+            <pre id="detail-content"></pre>
+            <button id="close-detail-button">Close Details</button>
+            <button id="edit-from-detail-button">Edit This Post</button>
+        </div>
+
+    </section>
+
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Disable specific key combos
+        document.addEventListener('keydown', function (e) {
+            // F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+J (Chrome DevTools)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+                e.preventDefault();
+            }
+
+            // Ctrl+U (View source)
+            if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+C (Element picker)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+    <script type="module" src="js/script.js"></script>
+</body>
+
+</html>

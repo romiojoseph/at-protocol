@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AT Pages: Search and read long-form posts on ATProto</title>
+    <meta name="description"
+        content="Create, search, and view long-form Bluesky posts with ATProto. No character limits. Posts stay in your repo and load via a simple frontend.">
+    <meta property="og:image" content="assets/social-image.png">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+    <meta property="og:title" content="AT Pages: Search and read long-form posts on ATProto">
+    <meta property="og:description"
+        content="Create, search, and view long-form Bluesky posts with ATProto. No character limits. Posts stay in your repo and load via a simple frontend.">
+    <meta property="og:image" content="assets/social-image.png">
+    <meta property="og:url" content="https://skywrite.pages.dev/">
+    <meta property="og:type" content="website">
+
+    <meta name="google-site-verification" content="z5JTPuNoEGAzpH4micWDRD9x9b2rt0aNo7LtdyamMAI" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
+
+    <!-- Blog's Main Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="post.css" />
+
+
+    <!-- Stylesheet for the Bluesky Comment Widget -->
+    <link rel="stylesheet" type="text/css" href="bsky-comments-widget/bluesky-comments.css">
+
+    <!-- Phosphor Icons (Required by the comment widget CSS AND the new loader) -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <meta name="robots" content="index, follow">
+</head>
+
+<body>
+    <header>
+        <div class="atproto-blog-name">
+            <!-- Link back to the main search page -->
+            <a href="/" title="Main page" target="_blank" rel="noopener">
+                <img src="assets/name.svg" alt="Pages" title="Write pages on AT Proto">
+            </a>
+            <!-- Navigation Links (Simplified) -->
+            <nav class="header-nav">
+                <!-- Maybe add other relevant links if needed -->
+                <a class="header-link" href="/write/" target="_blank" rel="noopener" title="Go to Bluesky">Write</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main content area (constrained width) -->
+    <!-- JS will render search form, post list, or single post here -->
+    <main id="atproto-app-container">
+        <!-- Initial content (like the search form) will be rendered here by JS -->
+    </main>
+
+    <!-- Target for the full-width comments wrapper (for single post view) -->
+    <div id="atproto-comments-wrapper-target">
+        <!-- The .widget-wrapper and its content will be inserted here by js/main.js -->
+    </div>
+
+    <!-- Full Screen Loading Overlay -->
+    <div id="atproto-loading-overlay" class="atproto-loading-overlay" style="display: none;">
+        <i class="ph-duotone ph-spinner"></i>
+        <span id="atproto-loading-text">Loading...</span>
+    </div>
+
+    <footer>
+        <div>
+            <p>Built on Bluesky & ATProto</p>
+            <p>JavaScripts made with LLMs</p>
+        </div>
+
+    </footer>
+
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Disable specific key combos
+        document.addEventListener('keydown', function (e) {
+            // F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+J (Chrome DevTools)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+                e.preventDefault();
+            }
+
+            // Ctrl+U (View source)
+            if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+            }
+
+            // Ctrl+Shift+C (Element picker)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+    <!-- Load the Bluesky Comment Widget script -->
+    <script src="bsky-comments-widget/bluesky-comments.js"></script>
+
+    <!-- Load the Bluesky Post Embed script GLOBALLY -->
+    <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+
+    <!-- Load refactored application script as a module -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+
+</html>
