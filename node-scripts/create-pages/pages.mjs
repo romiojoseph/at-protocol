@@ -13,7 +13,7 @@ dotenv.config();
 
 const BSKY_HANDLE = process.env.BLUESKY_HANDLE;
 const BSKY_APP_PASSWORD = process.env.BLUESKY_APP_PASSWORD;
-const BLOG_POST_NSID = 'app.blog.post'; // Your custom collection NSID
+const BLOG_POST_NSID = 'sky.write.on.pages'; // Your custom collection NSID
 const POSTS_PER_PAGE_CLI = 15; // How many posts to show per page in CLI list
 
 if (!BSKY_HANDLE || !BSKY_APP_PASSWORD) {

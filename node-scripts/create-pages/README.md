@@ -1,6 +1,6 @@
 # Bluesky AT Pages Manager (CLI)
 
-A command-line interface (CLI) tool to create, manage (list, view, edit, delete), and export long form posts stored as custom records (`app.blog.post`) on the Bluesky AT Protocol network. You can also use the front-end of this tool using the below tool
+A command-line interface (CLI) tool to create, manage (list, view, edit, delete), and export long form posts stored as custom records (`sky.write.on.pages`) on the Bluesky AT Protocol network. You can also use the front-end of this tool using the below tool
 
 <mark>**To view these posts, you need a frontend that supports them**</mark>. I have created one for public use. You can copy the link and share it anywhere.
 
@@ -9,6 +9,7 @@ A command-line interface (CLI) tool to create, manage (list, view, edit, delete)
 <button class="btn-primary" onclick="window.open('https://skywrite.pages.dev/', '_blank', 'noopener');">
 	Search and find your pages
 </button>
+
 ## Prerequisites
 
 *   **Node.js:** Version 18 or later recommended.
@@ -55,7 +56,7 @@ The script will log in and present you with a menu of options:
 
 1.  **Create New Post:** Guides you through entering the details for a new post.
 2.  **Manage Posts:** Lists existing posts with options to view details, edit, or delete them. Supports pagination for long lists.
-3.  **Export All Posts to JSON:** Fetches all your `app.blog.post` records and saves them to a timestamped JSON file in the script's directory.
+3.  **Export All Posts to JSON:** Fetches all your `sky.write.on.pages` records and saves them to a timestamped JSON file in the script's directory.
 4.  **Exit:** Closes the script.
 
 ## Post Fields
@@ -89,4 +90,4 @@ These fields can be left empty or cleared using the special command `(clear)` du
 
 *   **Date Format:** When entering dates (`publishedAt`, `updatedAt`), use the format `dd MMM yyyy hh:mm a` (e.g., `21 Mar 2025 03:30 PM`). ISO format (like `2025-03-21T15:30:00.000Z`) is also accepted.
 *   **Clear Command:** For *optional* text fields, you can type exactly `(clear)` (including parentheses) to remove any existing value for that field.
-*   **NSID:** The script uses the specific Namespace ID (NSID) `app.blog.post` for all records.
+*   **NSID:** The script uses the specific Namespace ID (NSID) `sky.write.on.pages` for all records.
