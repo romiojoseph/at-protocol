@@ -1,0 +1,26 @@
+name = "bluesky-bookmark-telegram-bot" # Choose a name for your worker
+main = "src/index.js"       # Entry point script
+compatibility_date = "2025-04-04" # Use a recent compatibility date
+
+# KV Namespace Bindings (Create these in your Cloudflare Dashboard)
+[[kv_namespaces]]
+binding = "BLUESKY_SESSION_KV"
+id = "<your_bluesky_session_kv_namespace_id>" # Replace with actual ID
+preview_id = "<your_bluesky_session_kv_namespace_preview_id>" # Replace with actual Preview ID
+
+[[kv_namespaces]]
+binding = "TELEGRAM_STATE_KV"
+id = "<your_telegram_state_kv_namespace_id>" # Replace with actual ID
+preview_id = "<your_telegram_state_kv_namespace_preview_id>" # Replace with actual Preview ID
+
+
+# Secrets (Set these using `wrangler secret put <NAME>`)
+# wrangler secret put TELEGRAM_BOT_TOKEN
+# wrangler secret put AUTHORIZED_CHAT_ID
+# wrangler secret put BLUESKY_USERNAME
+# wrangler secret put BLUESKY_APP_PASSWORD
+# wrangler secret put TELEGRAM_WEBHOOK_SECRET (Optional but recommended for security)
+
+[vars]
+# Optional: You could put non-sensitive constants here if needed
+# Example: BOOKMARK_COLLECTION = "personal.bookmark.feed"
