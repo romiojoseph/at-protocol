@@ -1,26 +1,20 @@
-name = "bluesky-bookmark-telegram-bot" # Choose a name for your worker
-main = "src/index.js"       # Entry point script
-compatibility_date = "2025-04-04" # Use a recent compatibility date
+# Worker name (must match project name in Cloudflare if deploying via Git)
+name = "bluesky-bookmark-telegram-bot"
 
-# KV Namespace Bindings (Create these in your Cloudflare Dashboard)
-[[kv_namespaces]]
-binding = "BLUESKY_SESSION_KV"
-id = "<your_bluesky_session_kv_namespace_id>" # Replace with actual ID
-preview_id = "<your_bluesky_session_kv_namespace_preview_id>" # Replace with actual Preview ID
+# Entry point for the Worker script relative to this file's location
+main = "src/index.js"
 
-[[kv_namespaces]]
-binding = "TELEGRAM_STATE_KV"
-id = "<your_telegram_state_kv_namespace_id>" # Replace with actual ID
-preview_id = "<your_telegram_state_kv_namespace_preview_id>" # Replace with actual Preview ID
+# Ensures Worker runtime APIs are compatible with this date's features
+# Use a recent date (YYYY-MM-DD) that is not in the future
+compatibility_date = "2025-01-01"
 
+# --- Configuration via Cloudflare Dashboard ---
+# Secrets (like API tokens, passwords, chat IDs) MUST be configured in the Cloudflare dashboard:
+# Worker -> Settings -> Variables -> Environment Variables -> Edit variables -> Add secret
+#
+# KV Namespace Bindings MUST be configured in the Cloudflare dashboard:
+# Worker -> Settings -> Variables -> KV Namespace Bindings -> Add binding
 
-# Secrets (Set these using `wrangler secret put <NAME>`)
-# wrangler secret put TELEGRAM_BOT_TOKEN
-# wrangler secret put AUTHORIZED_CHAT_ID
-# wrangler secret put BLUESKY_USERNAME
-# wrangler secret put BLUESKY_APP_PASSWORD
-# wrangler secret put TELEGRAM_WEBHOOK_SECRET (Optional but recommended for security)
-
-[vars]
-# Optional: You could put non-sensitive constants here if needed
-# Example: BOOKMARK_COLLECTION = "personal.bookmark.feed"
+# Optional: Enable logging viewable in the Cloudflare Dashboard
+[observability.logs]
+enabled = true
